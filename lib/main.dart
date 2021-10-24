@@ -22,22 +22,44 @@ class MyTodoApp extends StatelessWidget {
 }
 
 // リスト一覧画面用Widget
-class TodoListPage extends StatelessWidget {
+class TodoListPage extends StatefulWidget {
+  @override
+  _TodoListPageState createState() => _TodoListPageState();
+}
+
+class _TodoListPageState extends State<TodoListPage> {
+  // Todoリストのデータ
+  List<String> todoList = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text('リスト一覧画面'),
+      appBar: AppBar(
+        title: Text('リスト一覧'),
+      ),
+      body: ListView.builder(
+        itemCount: todoList.length,
+        itemBuilder: (context, index) {
+          return Card(
+            child: ListTile(
+              title: Text(todoList[index]),
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           // "push"で新規画面に遷移
-          Navigator.of(context).push(
+          final newListText = await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) {
               // 遷移先の画面としてリスト追加画面を指定
               return TodoAddPage();
             }),
           );
+          if (newListText != null) {
+            setState(() {
+              todoList.add(newListText);
+            });
+          }
         },
         child: Icon(Icons.add),
       ),
@@ -46,20 +68,59 @@ class TodoListPage extends StatelessWidget {
 }
 
 // リスト追加画面用Widget
-class TodoAddPage extends StatelessWidget {
+class TodoAddPage extends StatefulWidget {
+  _TodoAddPageState createState() => _TodoAddPageState();
+}
+
+class _TodoAddPageState extends State<TodoAddPage> {
+  // 入力されたテキストをデータとして持つ
+  String _text = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: TextButton(
-          // ボタンをクリックした時の処理
-          onPressed: () {
-            // "pop"で前の画面に戻る
-            Navigator.of(context).pop();
-          },
-          child: Text('リスト追加画面（クリックで戻る）'),
+        appBar: AppBar(
+          title: Text('リスト追加画面'),
         ),
-      ),
-    );
+        body: Container(
+            padding: EdgeInsets.all(64),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(_text, style: TextStyle(color: Colors.blue)),
+                const SizedBox(height: 8),
+                TextField(
+                  onChanged: (String value) {
+                    setState(() {
+                      _text = value;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  //リスト追加ボタン
+                  height: 8,
+                ),
+                Container(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(_text);
+                    },
+                    child: Text('リスト追加', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+                const SizedBox(
+                    //キャンセルボタン
+                    height: 8),
+                Container(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('キャンセル'),
+                  ),
+                )
+              ],
+            )));
   }
 }
