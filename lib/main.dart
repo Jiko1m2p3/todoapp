@@ -10,7 +10,7 @@ class MyTodoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       // アプリ名
-      title: 'My Todo App',
+      title: 'My Todo App1',
       theme: ThemeData(
         // テーマカラー
         primarySwatch: Colors.blue,
