@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 void main() {
   // 最初に表示するWidget
@@ -29,7 +30,12 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   // Todoリストのデータ
-  List<String> todoList = [];
+  List<String> todoList = [
+    '111',
+    '222',
+    '333',
+    'title',
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,9 +45,45 @@ class _TodoListPageState extends State<TodoListPage> {
       body: ListView.builder(
         itemCount: todoList.length,
         itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text(todoList[index]),
+          final text = todoList[index];
+          return Dismissible(
+            key: Key(text),
+            secondaryBackground: Container(
+              padding: EdgeInsets.only(
+                right: 10,
+              ),
+              alignment: AlignmentDirectional.centerEnd,
+              color: Colors.red,
+              child: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+            ),
+
+            background: Container(
+              alignment: Alignment.centerLeft,
+              color: Colors.orangeAccent[200],
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
+                child: Icon(Icons.thumb_up, color: Colors.white),
+              ),
+            ),
+
+            // direction: DismissDirection.startToEnd,
+            //direction: DismissDirection.endToStart,
+            onDismissed: (direction) {
+              if (direction == DismissDirection.endToStart) {
+                // 右から左にスワイプされた時
+              } else {
+                // それ以外
+                print('onDismissed');
+                todoList.removeAt(index);
+              }
+            },
+            child: Card(
+              child: ListTile(
+                title: Text(todoList[index]),
+              ),
             ),
           );
         },
